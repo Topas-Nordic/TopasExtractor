@@ -28,6 +28,17 @@ Topas extrator is primarily a CLI based tool. After installing the package simpl
 tpextract path-to-your.OUT results.csv
 ```
 
+Topas Extract allows you to exclude or select specific refined parameters to be exported.
+
+```
+tpextract ref.OUT results.csv -sct a, b, c, scale   # This selects only the lattice vectors and the scale factor.
+```
+
+```
+tpextract ref.OUT results.csv -exc Zero_Error, Si, O1  # Excludes Zero_Error, and refined params for Si and O atoms.
+```
+
+
 To see all the options of Topas Exract then use the help menu:
 
 ```
