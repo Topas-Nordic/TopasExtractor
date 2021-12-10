@@ -1,8 +1,11 @@
 # Topas Extractor
 
-Topas Extractor is mainly a CLI tool for extracting refined parameters from Topas .OUT files and export them
+Topas Extractor is mainly a CLI tool for extracting refined parameters from Topas .OUT files directly, and export them
 as a csv file. The tool works with both single refinement files and BIG.OUT files which we typically generate
-when setting up a surface refinement.
+when setting up a surface refinement. 
+
+Although Topas has good support to export parameters, I and many others prefer to extract parameters directly from
+the .OUT file. Topas Extractor is an aid for this type of workflow.
 
 ## Installation
 
