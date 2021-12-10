@@ -28,16 +28,22 @@ Topas extrator is primarily a CLI based tool. After installing the package simpl
 tpextract path-to-your.OUT results.csv
 ```
 
-Topas Extract allows you to exclude or select specific refined parameters to be exported.
+Topas Extract allows you to exclude or select specific refined parameters to be exported. Remember to
+exclude any white-spaces between the commas.
 
 ```
-tpextract ref.OUT results.csv -sct a, b, c, scale   # This selects only the lattice vectors and the scale factor.
+tpextract ref.OUT results.csv -sct "a,b,c,scale"   # This selects parameters starting with the letter b, a, c and the scale factor.
 ```
 
 ```
-tpextract ref.OUT results.csv -exc Zero_Error, Si, O1  # Excludes Zero_Error, and refined params for Si and O atoms.
+tpextract ref.OUT results.csv -exc "Zero_Error,Si,O1"  # Excludes Zero_Error, and refined params for Si and O atoms.
 ```
 
+You can combine a select and exclude statement to yield exactly what you want:
+
+```
+tpextract ref.OUT results.csv -sct "a,b,c" -exc "be,bkg" #This gives only the lattive parameters a, b, and c.
+```
 
 To see all the options of Topas Exract then use the help menu:
 
@@ -53,8 +59,8 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
-  -exc EXC    Parameters to exclude from Topas OUT file. Written as a comma seperated list: E.g: c, a, scale, ...
-  -sct SCT    Parameters to select specifically from Topas OUT file. Written as a commar separated list. E.g.: c, a, b, ....
+  -exc EXC    Parameters to exclude from Topas OUT file. Written as a comma seperated list: E.g: "c,a,scale"
+  -sct SCT    Parameters to select specifically from Topas OUT file. Written as a commar separated list. E.g.: "c,a,b"
   -xdd        Include the xdd file name in the extraction.
   -big        For surface refined BIG.INP topas files.
 ```
