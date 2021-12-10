@@ -28,8 +28,8 @@ Topas extrator is primarily a CLI based tool. After installing the package simpl
 tpextract path-to-your.OUT results.csv
 ```
 
-Topas Extract allows you to exclude or select specific refined parameters to be exported. Remember to
-exclude any white-spaces between the commas.
+Topas Extract allows you to exclude or select specific refined parameters to be exported. __Remember to
+exclude any white-spaces between the commas__.
 
 ```
 tpextract ref.OUT results.csv -sct "a,b,c,scale"   # This selects parameters starting with the letter b, a, c and the scale factor.
