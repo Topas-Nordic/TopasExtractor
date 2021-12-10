@@ -20,9 +20,7 @@ def read_topas(tpfile):
     if not os.path.isfile(tpfile):
         raise ValueError(f"{tpfile} is not a valid file.")
 
-    if not tpfile.endswith((".out", ".inp")):
-        print(tpfile)
-        print(tpfile.endswith(".inp"))
+    if not tpfile.lower().endswith((".out", ".inp")):
         raise ValueError(f"\"{tpfile}\" is not a Topas file.")
 
     #topas_specific = ['local', 'site']  # Topas keywords which require special treatement
@@ -35,7 +33,7 @@ def read_topas(tpfile):
     return text
 
 
-def extract_refined(text,  exclude=[], select=[], xdd_include=True):
+def extract_refined(text,  exclude=[], select=[], xdd_include=False):
     """[summary]
 
     Args:
@@ -65,7 +63,7 @@ def extract_refined(text,  exclude=[], select=[], xdd_include=True):
                 i += 1  
 
         # GETTING THE REFINED PARAMETERS
-        if re.search(r"(?<=\s|-)[\d.]+(?=`)", line):  # Check if line contains a refined parameter
+        if re.search(r"[e\d.-]+(?=`|'#)", line):  # Check if line contains a refined parameter
 
             key = re.findall(r"^(?:[\t\s]{0,100})[\w_\d]+", line)  # We get the first word of the line
             
@@ -78,7 +76,7 @@ def extract_refined(text,  exclude=[], select=[], xdd_include=True):
                 key = re.findall(fr"(?<={key})(?:[\s]+)[\w]+", line)[0]  # We take the word after (local or site)
 
             key = re.findall(r"\w+", key)[0]  # Our final key
-            value = re.findall(r"[e\d.-]+(?=`)", line)  # The refined value
+            value = re.findall(r"[e\d.-]+(?=`|'#)", line)  # The refined value
             value = [float(val) for val in value] # Converting to float.
 
             if key in found_params.copy().keys():
@@ -87,7 +85,6 @@ def extract_refined(text,  exclude=[], select=[], xdd_include=True):
                     
                     old_val = found_params[key]
                     key_old = key + f'_01'
-                    print(f"old key: {key_old}")
                     found_params[key_old] = old_val
                     del found_params[key]
 
@@ -95,8 +92,6 @@ def extract_refined(text,  exclude=[], select=[], xdd_include=True):
                     key = key + f'_{repeating_key:02}'
                 else:
                     key = key + f'_{repeating_key:03}'
-                
-                print(f"regular key {key}")
 
             found_params[key] = value
 
@@ -140,7 +135,7 @@ def extract_refined(text,  exclude=[], select=[], xdd_include=True):
     return found_params
 
 
-def extract_big_out(text, exclude=(), select=(), xdd_include=True):
+def extract_big_out(text, exclude=(), select=(), xdd_include=False, delim="xdd"):
     """Extracts refined parameters from BIG.OUT Topas files, generated
     typically from surface refinements:
 
@@ -155,21 +150,22 @@ def extract_big_out(text, exclude=(), select=(), xdd_include=True):
     Returns:
         dict: Extracted topas parameters as a dict.
     """
-
     # FINDING NUMBER OF FILES AND SECTION LENGTS
     sep = []
     for i, line in enumerate(text):
-        if re.search(r"xdd", line):
+        if re.search(fr"{delim}", line):
             sep.append(i)
 
     number_files = len(sep)
     sep = [s - sep[0] for s in sep]
-
     j, k = 0, 1
     for i in range(0, number_files):
         if k == number_files:
             wanted_text = text[sep[j]:]
             found_params = extract_refined(text=wanted_text, exclude=exclude, select=select, xdd_include=xdd_include)
+            for key in found_params.keys():
+                    vals = found_params[key]
+                    main_params[key].append(vals[0])
             break
         
         else:
@@ -181,7 +177,6 @@ def extract_big_out(text, exclude=(), select=(), xdd_include=True):
                 for key in found_params.keys():
                     vals = found_params[key]
                     main_params[key].append(vals[0])
-
         j += 1
         k += 1
 

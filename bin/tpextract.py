@@ -24,6 +24,7 @@ def main():
 
     parser.add_argument('-xdd', action="store_true", help="Include the xdd file name in the extraction.")
     parser.add_argument('-big', action="store_true", help="For surface or parametric refined BIG.OUT Topas files.")
+    parser.add_argument('-delim', type=str, default="xdd", help="Topas .OUT page divider/delimiter. Defaults to \"xdd\".")
 
 
 
@@ -39,14 +40,22 @@ def main():
         select = [p for p in args_dict['sct'].split(',')]
     else:
         select = []
-
-
+    
     tp_text = read_topas(args_dict['topas-out'])
 
     if args_dict['big']:
-        params = extract_big_out(text=tp_text, select=select, exclude=exclude, xdd_include=args_dict['xdd'])
+        params = extract_big_out(
+                text=tp_text,
+                select=select,
+                exclude=exclude,
+                xdd_include=args_dict['xdd'],
+                delim=args_dict['delim'])
     else:
-        params = extract_refined(text=tp_text, select=select, exclude=exclude, xdd_include=args_dict['xdd'])
+        params = extract_refined(
+                text=tp_text,
+                select=select,
+                exclude=exclude,
+                xdd_include=args_dict['xdd'])
 
     topas_to_csv(params=params, output=args_dict['output'])
 
