@@ -1,7 +1,3 @@
-""""
-TOPPY - The TOPAS  parameter extractor for quick and easy extraction of refined parameters.
-"""
-
 import os 
 import re
 import pandas as pd
