@@ -157,12 +157,13 @@ def extract_big_out(text, exclude=(), select=(), xdd_include=False, delim="xdd")
             sep.append(i)
 
     number_files = len(sep)
-    sep = [s - sep[0] for s in sep]
+    sep = [s for s in sep]
     j, k = 0, 1
     for i in range(0, number_files):
         if k == number_files:
             wanted_text = text[sep[j]:]
             found_params = extract_refined(text=wanted_text, exclude=exclude, select=select, xdd_include=xdd_include)
+            print(found_params)
             for key in found_params.keys():
                     vals = found_params[key]
                     main_params[key].append(vals[0])
@@ -174,6 +175,7 @@ def extract_big_out(text, exclude=(), select=(), xdd_include=False, delim="xdd")
             if i == 0:
                 main_params = found_params
             else:
+                print(found_params)
                 for key in found_params.keys():
                     vals = found_params[key]
                     main_params[key].append(vals[0])
