@@ -1,8 +1,8 @@
 # Topas Extractor
 
-Topas Extractor is mainly a CLI tool for extracting refined parameters from Topas .OUT files directly, and export them
+Topas Extractor is mainly a CLI tool for extracting refined and non-refined parameters from Topas .OUT files directly, and export them
 as a csv file. The tool works with both single refinement files and BIG.OUT files which we typically generate
-when setting up a surface refinement. 
+when setting up a surface refinement. By default Topas Extractor does not extract non-refined paramters. To do this see further down.
 
 Although Topas has good support to export parameters, I and many others prefer to extract parameters directly from
 the .OUT file. Topas Extractor is an aid for this type of workflow.
@@ -77,7 +77,24 @@ tp_file = te.read_topas(tpfile=r".OUT")
 extracted_params = te.extract_refined(tp_file)  # returns a dictionary of the refined parameters
 ```
 
-# Disclamer
+## Extracting non-refined parameters.
+
+Topas Extractor does not by default extract non-refined parameters. To do this simply add '# after the non-refined number.
+
+```
+x_calculation_step 0.02'# This parameters will now be extracted.
+bkg @  41.8829404`  70.7020173`
+Zero_Error(,-0.01103)
+start_X  2.2'#   This parameters will now be extracted.
+finish_X  26
+LP_Factor( 0)
+One_on_X(@, 522.60385`)
+
+```
+
+## Disclamer
 The Topas Extractor has been tested with many different .OUT files. But, this is not a guarantee that
 the Topas Extractor always will be able to find every refined parameter without issues. If you stumble upon a problem,
 please leave an "Issue" ticket or contact me.
+
+
