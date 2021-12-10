@@ -72,6 +72,6 @@ extracted_params = te.extract_refined(tp_file)  # returns a dictionary of the re
 ```
 
 # Disclamer
-The Topas Extractor has been tested with many different .OUT files. But, this is not a garantie that
+The Topas Extractor has been tested with many different .OUT files. But, this is not a guarantee that
 the Topas Extractor always will be able to find every refined parameter without issues. If you stumble upon a problem,
 please leave an "Issue" ticket or contact me.
