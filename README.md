@@ -13,7 +13,7 @@ the .OUT file. Topas Extractor is an aid for this type of workflow.
 git clone https://github.com/Topas-Nordic/TopasExtractor.git
 
 cd TopasExtractor
-pip install .
+pip install -e .
 ```
 Alternativly if you do not have git installed:
 ```
