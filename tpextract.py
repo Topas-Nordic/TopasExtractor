@@ -1,6 +1,7 @@
 import os 
 import re
 import pandas as pd
+import warnings
 
 def read_topas(tpfile):
     """Reads the TOPAS .OUT file.
@@ -49,7 +50,7 @@ def extract_refined(text,  exclude=[], select=[], xdd_include=False):
     ## GATHERING REFINED DATA
     found_params = {}  # Empty dict
     i = 0
-    for line in text:
+    for j, line in enumerate(text):
 
         # GETTING THE XDD FILE NAME
         if xdd_include:
@@ -64,18 +65,28 @@ def extract_refined(text,  exclude=[], select=[], xdd_include=False):
 
         # GETTING THE REFINED PARAMETERS
         if re.search(r"[e\d.-]+(?=`|'#)", line):  # Check if line contains a refined parameter
-
+           # print(line)
             key = re.findall(r"^(?:[\t\s]{0,100})[\w_\d]+", line)  # We get the first word of the line
-            
+ 
             if len(key) == 0: #  if we don't get a match we assign "unknown_#"
                 key = f"unknown_{len(found_params)-1}"
             else:
                 key = key[0] 
             
             if re.search(r"local|site", key):  # Here we check if the key contains local or site.
-                key = re.findall(fr"(?<={key})(?:[\s]+)[\w]+", line)[0]  # We take the word after (local or site)
-
+                try:
+                    key = re.findall(fr"(?<={key})(?:[\s]+)[\w]+", line)[0]  # We take the word after (local or site)
+                except:
+                    warnings.warn(f"Issue with {key} parameter on line {j}.")
+                    key = f"local_{i}"
             key = re.findall(r"\w+", key)[0]  # Our final key
+            print(key)
+            try:
+                if float(key):
+                    warnings.warn(f"Parameter name not found for value on line {j}")
+            except:
+                pass
+
             value = re.findall(r"[e\d.-]+(?=`|'#)", line)  # The refined value
             value = [float(val) for val in value] # Converting to float.
 
@@ -163,7 +174,6 @@ def extract_big_out(text, exclude=(), select=(), xdd_include=False, delim="xdd")
         if k == number_files:
             wanted_text = text[sep[j]:]
             found_params = extract_refined(text=wanted_text, exclude=exclude, select=select, xdd_include=xdd_include)
-            print(found_params)
             for key in found_params.keys():
                     vals = found_params[key]
                     main_params[key].append(vals[0])
@@ -175,7 +185,6 @@ def extract_big_out(text, exclude=(), select=(), xdd_include=False, delim="xdd")
             if i == 0:
                 main_params = found_params
             else:
-                print(found_params)
                 for key in found_params.keys():
                     vals = found_params[key]
                     main_params[key].append(vals[0])
