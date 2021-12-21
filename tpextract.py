@@ -19,9 +19,12 @@ def read_topas(tpfile):
 
     # CHECKING IF THE FILE IS A VALID TOPAS FILE
     if not os.path.isfile(tpfile):
-        raise ValueError(f"{tpfile} is not a valid file.")
+        if os.path.isdir(tpfile):
+            pass
+        else:
+            raise ValueError(f"{tpfile} is not a valid file.")
 
-    if not tpfile.lower().endswith((".out", ".inp")):
+    elif not tpfile.lower().endswith((".out", ".inp")):
         raise ValueError(f"\"{tpfile}\" is not a Topas file.")
 
     #topas_specific = ['local', 'site']  # Topas keywords which require special treatement
@@ -80,7 +83,7 @@ def extract_refined(text,  exclude=[], select=[], xdd_include=False):
                     warnings.warn(f"Issue with {key} parameter on line {j}.")
                     key = f"local_{i}"
             key = re.findall(r"\w+", key)[0]  # Our final key
-            print(key)
+            #print(key)
             try:
                 if float(key):
                     warnings.warn(f"Parameter name not found for value on line {j}")
@@ -190,6 +193,32 @@ def extract_big_out(text, exclude=(), select=(), xdd_include=False, delim="xdd")
                     main_params[key].append(vals[0])
         j += 1
         k += 1
+
+    return main_params
+
+def extract_sequential(folder, exclude=[], select=[]):
+
+    files = os.listdir(folder)
+    valid_files = sorted([os.path.join(folder, f) for f in files if f.lower().endswith('.out')])
+    print(valid_files)
+
+    for i, file in enumerate(valid_files):
+        tp = read_topas(file)
+        found_params = extract_refined(tp, exclude=exclude, select=select)
+        
+        
+        out_name = file.split('\\')[-1].split('.')[0]
+        ## Appending dictionaries for each tp out file.
+        #print(out_name)
+        if i == 0:
+            main_params = found_params
+            main_params['filename'] = [out_name]
+        else:
+            for key in found_params.keys():
+                vals = found_params[key]
+                main_params[key].append(vals[0])
+                
+            main_params['filename'].append(out_name)
 
     return main_params
 
